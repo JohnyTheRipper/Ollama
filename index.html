@@ -1,83 +1,85 @@
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>
-   Artificial
-  </title>
-  <script src="https://cdn.tailwindcss.com">
-  </script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-  <style>
-   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-        body {
-            font-family: 'Roboto', sans-serif;
-        }
-        .nav-link {
-            position: relative;
-            display: inline-block;
-            padding-bottom: 5px;
-        }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            transform: scaleX(0);
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: white;
-            transform-origin: bottom right;
-            transition: transform 0.25s ease-out;
-        }
-        .nav-link:hover::after {
-            transform: scaleX(1);
-            transform-origin: bottom left;
-        }
-  </style>
- </head>
- <body class="bg-gradient-to-r from-gray-500 via-gray-700 to-gray-900 flex items-center justify-center min-h-screen">
-  <div class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 text-white rounded-lg shadow-lg p-10 max-w-5xl w-full">
-   <nav class="flex justify-end space-x-4 text-sm">
-    <a class="nav-link hover:text-gray-300" href="#">
-     HOME
-    </a>
-    <a class="nav-link hover:text-gray-300" href="#">
-     ABOUT
-    </a>
-    <a class="nav-link hover:text-gray-300" href="#">
-     TECHNOLOGY
-    </a>
-    <a class="nav-link hover:text-gray-300" href="#">
-     LEARN
-    </a>
-    <a class="nav-link hover:text-gray-300" href="#">
-     CONTACT
-    </a>
-   </nav>
-   <div class="flex flex-col md:flex-row items-center justify-between mt-10">
-    <div class="w-full md:w-1/2 mb-10 md:mb-0">
-     <img alt="" class="" height="400" src="ai.gif"/>
-    </div>
-    <div class="w-full md:w-1/2 text-center md:text-right">
-     <h1 class="text-4xl font-bold">
-      Artificial
-     </h1>
-     <h2 class="text-2xl mt-2">
-      Empowering Innovation through AI
-     </h2>
-     <p class="mt-4 text-gray-300">
-      At Artificial, we are dedicated to developing cutting-edge AI solutions that drive business value and transform industries. 
-      Our advanced technology is designed to continually learn and grow, adapting to the unique needs of our clients.
-     </p>
-     <a href="http://artificial.linkpc.net:8080/">
-        <button class="mt-6 px-6 py-2 border border-white rounded-full hover:bg-white hover:text-gray-700 transition">
-        Get Started
-        </button>
-     </a>
+// script.js
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('code-flash');
+  const ctx = canvas.getContext('2d');
 
-    </div>
-   </div>
-  </div>
- </body>
-</html>
+  // Set the canvas dimensions
+  canvas.width = 400;
+  canvas.height = 400;
+
+  // Define some constants for our code flash effect
+  const CHARACTERS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const FONT_SIZE = 18;
+  const FONT_FAMILY = 'monospace';
+  const nordicColors = [
+    '#8FBCBB', // Frost
+    '#5E81AC', // Berg
+    '#434C5E', // Night
+    '#3B4252', // Dark
+    '#2E3440', // Deep
+  ];
+
+  function getRandomNordicColor(alpha = 1) {
+    const randomIndex = Math.floor(Math.random() * nordicColors.length);
+    return alpha === 1 ? nordicColors[randomIndex] : `${nordicColors[randomIndex]}${alpha}`;
+  }
+
+  const TEXT_COLOR = getRandomNordicColor(); // Update to random Nordic color
+  const BACKGROUND_COLOR = 'transparent';
+  const CHANGE_RATE = 0.01; // adjust this value to control the speed of letter changes
+  const GLOW_COLOR = getRandomNordicColor(0.2); // Update to random Nordic color with alpha
+  const GLOW_RADIUS = 2; // adjust this value to control the glow radius
+
+  // Initialize a 2D array to store our grid of letters
+  let grid = [];
+  for (let i = 0; i < 21; i++) {
+    grid.push([]);
+    for (let j = 0; j < 21; j++) {
+      grid[grid.length - 1].push(getRandomCharacter());
+    }
+  }
+
+  // Function to generate a random character
+  function getRandomCharacter() {
+    return CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
+  }
+
+  // Main animation loop
+  function animate() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw each letter in the grid with a glow effect
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid[i].length; j++) {
+        // Draw the glow effect
+        ctx.shadowColor = GLOW_COLOR;
+        ctx.shadowBlur = GLOW_RADIUS;
+        ctx.font = `${FONT_SIZE}px ${FONT_FAMILY}`;
+        ctx.fillStyle = TEXT_COLOR;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(grid[i][j], j * FONT_SIZE + (400 - 21 * FONT_SIZE) / 2, i * FONT_SIZE + (400 - 21 * FONT_SIZE) / 2);
+
+        // Remove the glow effect for the next letter
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    // Randomly change the letters
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid[i].length; j++) {
+        if (Math.random() < CHANGE_RATE) {
+          grid[i][j] = getRandomCharacter();
+        }
+      }
+    }
+
+    // Request the next animation frame
+    requestAnimationFrame(animate);
+  }
+
+  // Start the animation
+  animate();
+});
